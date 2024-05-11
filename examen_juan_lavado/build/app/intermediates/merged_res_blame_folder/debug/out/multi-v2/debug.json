@@ -652,7 +652,7 @@
             "outputFile": "com.example.examen_juan_lavado.app-merged_res-15:/values-night-v8_values-night-v8.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\examen\\examen_juan_lavado\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "C:\\examen_final\\examen_juan_lavado\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
@@ -2132,7 +2132,7 @@
                     }
                 },
                 {
-                    "source": "C:\\examen\\examen_juan_lavado\\android\\app\\src\\main\\res\\values\\styles.xml",
+                    "source": "C:\\examen_final\\examen_juan_lavado\\android\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

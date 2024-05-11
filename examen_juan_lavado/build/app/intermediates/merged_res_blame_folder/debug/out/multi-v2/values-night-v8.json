@@ -4,7 +4,7 @@
             "outputFile": "com.example.examen_juan_lavado.app-mergeDebugResources-13:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "C:\\examen\\examen_juan_lavado\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "C:\\examen_final\\examen_juan_lavado\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
