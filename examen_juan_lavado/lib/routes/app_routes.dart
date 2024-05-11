@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:examen_juan_lavado/screen/screen.dart';
-
+//trd
 class AppRoutes {
   static const initialRoute = 'login';
   static Map<String, Widget Function(BuildContext)> routes = {
