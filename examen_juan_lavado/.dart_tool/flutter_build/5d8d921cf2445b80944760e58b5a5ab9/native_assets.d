@@ -1,0 +1,1 @@
+ C:\\examen\\examen_juan_lavado\\.dart_tool\\flutter_build\\5d8d921cf2445b80944760e58b5a5ab9\\native_assets.yaml: 
