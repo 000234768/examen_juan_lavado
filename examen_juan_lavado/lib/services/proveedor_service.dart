@@ -38,4 +38,96 @@ class ProveedorService extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+  Future<void> addProveedor(String nombre, String apellido, String correo, String estado) async {
+  final url = Uri.http(
+    _baseUrl,
+    'ejemplos/provider_add_rest/',
+  );
+
+  String basicAuth = 'Basic ' + base64Encode(utf8.encode('$_user:$_pass'));
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': basicAuth,
+      'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+    },
+    body: jsonEncode({
+      'provider_name': nombre,
+      'provider_last_name': apellido,
+      'provider_mail': correo,
+      'provider_state': estado,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print('Proveedor agregado exitosamente');
+    // Puedes recargar la lista de proveedores después de agregar uno nuevo
+    await loadProveedores();
+  } else {
+    throw Exception('Error al agregar proveedor. Status code: ${response.statusCode}');
+  }
 }
+Future<void> editProveedor(int id, String nombre, String apellido, String correo, String estado) async {
+  final url = Uri.http(
+    _baseUrl,
+    'ejemplos/provider_edit_rest/',
+  );
+
+  String basicAuth = 'Basic ' + base64Encode(utf8.encode('$_user:$_pass'));
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': basicAuth,
+      'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+    },
+    body: jsonEncode({
+      'provider_id': id,
+      'provider_name': nombre,
+      'provider_last_name': apellido,
+      'provider_mail': correo,
+      'provider_state': estado,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print('Proveedor editado exitosamente');
+    // Puedes recargar la lista de proveedores después de editar uno
+    await loadProveedores();
+  } else {
+    throw Exception('Error al editar proveedor. Status code: ${response.statusCode}');
+  }
+}
+Future<void> deleteProveedor(int id) async {
+  final url = Uri.http(
+    _baseUrl,
+    'ejemplos/provider_del_rest/',
+  );
+
+  String basicAuth = 'Basic ' + base64Encode(utf8.encode('$_user:$_pass'));
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': basicAuth,
+      'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+    },
+    body: jsonEncode({
+      'provider_id': id,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print('Proveedor eliminado exitosamente');
+    // Puedes recargar la lista de proveedores después de eliminar uno
+    await loadProveedores();
+  } else {
+    throw Exception('Error al eliminar proveedor. Status code: ${response.statusCode}');
+  }
+}
+
+
+}
+
+
