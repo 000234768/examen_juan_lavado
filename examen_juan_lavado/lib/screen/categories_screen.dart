@@ -1,27 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:examen_juan_lavado/providers/category_provider.dart'; 
 import 'package:examen_juan_lavado/services/categories_service.dart';
-import 'package:examen_juan_lavado/models/category.dart'; 
+import 'package:examen_juan_lavado/models/category.dart';
 
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Categorías'),
-      ),
+      appBar: AppBar(title: Text('Categorías')),
       body: CategoryWidget(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Mostrar el diálogo para agregar una nueva categoría
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AddCategoryDialog();
-            },
-          );
-        },
+        onPressed: () => showDialog(context: context, builder: (context) => AddCategoryDialog()),
         child: Icon(Icons.add),
       ),
     );
@@ -29,40 +18,27 @@ class MainScreen extends StatelessWidget {
 }
 
 class AddCategoryDialog extends StatelessWidget {
+  final TextEditingController categoryNameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController categoryNameController = TextEditingController();
-
     return AlertDialog(
       title: Text('Agregar Categoría'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: categoryNameController,
-              decoration: InputDecoration(labelText: 'Nombre de la categoría'),
-            ),
+            TextField(controller: categoryNameController, decoration: InputDecoration(labelText: 'Nombre de la categoría')),
           ],
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('Cancelar'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar')),
         ElevatedButton(
           onPressed: () async {
-            // Obtener el nombre de la categoría ingresado por el usuario
             String categoryName = categoryNameController.text;
-
-            // Agregar la categoría utilizando el servicio correspondiente
             final categoryService = Provider.of<CategoryService>(context, listen: false);
             await categoryService.addCategory(categoryName);
-
-            // Cerrar el diálogo
             Navigator.of(context).pop();
           },
           child: Text('Guardar'),
@@ -75,29 +51,17 @@ class AddCategoryDialog extends StatelessWidget {
 class CategoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Accede al provider de categorías
-    final categoryProvider = Provider.of<CategoryService>(context);
+    final categoryService = Provider.of<CategoryService>(context);
     return Container(
       padding: EdgeInsets.all(16.0),
-      color: Colors.blueGrey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Categorías',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 10.0),
-          // Muestra la lista de categorías obtenida del provider
           Expanded(
             child: ListView.builder(
-              itemCount: categoryProvider.categories.length,
+              itemCount: categoryService.categories.length,
               itemBuilder: (context, index) {
-                final category = categoryProvider.categories[index];
+                final category = categoryService.categories[index];
                 return CategoryCard(category: category);
               },
             ),
@@ -115,94 +79,47 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categoryService = Provider.of<CategoryService>(context, listen: false);
-
     return Card(
+      elevation: 4.0,
+      margin: EdgeInsets.all(8.0),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'ID: ${category.categoryId}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Mostrar el diálogo para editar la categoría
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return EditCategoryDialog(category: category);
-                          },
-                        );
-                      },
-                    ),
-                    SizedBox(width: 8), // Espaciado entre los íconos
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        // Eliminar la categoría
-                        _showDeleteConfirmationDialog(context, categoryService, category.categoryId);
-                      },
-                    ),
-                  ],
-                ),
+                Text('ID: ${category.categoryId}', style: TextStyle(fontWeight: FontWeight.bold)),
+                IconButton(icon: Icon(Icons.edit), onPressed: () => showDialog(context: context, builder: (_) => EditCategoryDialog(category: category))),
+                IconButton(icon: Icon(Icons.delete), onPressed: () => _showDeleteConfirmationDialog(context, category)),
               ],
             ),
             SizedBox(height: 10),
-            Text(
-              'Nombre: ${category.categoryName}',
-              style: TextStyle(color: Colors.black),
-            ),
-            Text(
-              'Estado: ${category.categoryState}',
-              style: TextStyle(color: Colors.black),
-            ),
+            Text('Nombre: ${category.categoryName}', style: TextStyle(color: Colors.black54)),
+            Text('Estado: ${category.categoryState}', style: TextStyle(color: Colors.black54)),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _showDeleteConfirmationDialog(BuildContext context, CategoryService categoryService, int categoryId) async {
-    return showDialog<void>(
+  void _showDeleteConfirmationDialog(BuildContext context, Category category) {
+    showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirmar eliminación'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('¿Está seguro de que desea eliminar esta categoría?'),
-              ],
-            ),
-          ),
+          content: Text('¿Estás seguro de que deseas eliminar esta categoría?'),
           actions: <Widget>[
+            TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar')),
             TextButton(
-              child: Text('Cancelar'),
-              onPressed: () {
+              onPressed: () async {
+                final categoryService = Provider.of<CategoryService>(context, listen: false);
+                await categoryService.deleteCategory(category.categoryId);
                 Navigator.of(context).pop();
               },
-            ),
-            TextButton(
-              child: Text('Eliminar'),
-              onPressed: () async {
-                try {
-                  await categoryService.deleteCategory(categoryId);
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  print('Error al eliminar la categoría: $e');
-                  // Mostrar un mensaje de error al usuario si es necesario
-                }
-              },
+              child: Text('Eliminar', style: TextStyle(color: Colors.red)),
             ),
           ],
         );

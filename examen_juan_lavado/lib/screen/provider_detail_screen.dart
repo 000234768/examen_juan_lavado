@@ -6,106 +6,131 @@ import 'package:examen_juan_lavado/models/proveedor.dart';
 class ProviderDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final proveedorService = Provider.of<ProveedorService>(context);
-
     return Scaffold(
+      appBar: AppBar(title: Text('Proveedores')),
       body: Consumer<ProveedorService>(
-        builder: (context, proveedorService, child) {
-          if (proveedorService.isLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (proveedorService.proveedores.isEmpty) {
-            return Center(child: Text('No hay datos del proveedor'));
-          } else {
-            final proveedores = proveedorService.proveedores;
-            final totalItems = proveedores.length;
-            final maxItemsPerPage = 10; // Número máximo de elementos por página
-            final totalPages = (totalItems / maxItemsPerPage).ceil();
+        builder: (context, service, child) {
+          if (service.isLoading) return Center(child: CircularProgressIndicator());
+          if (service.proveedores.isEmpty) return Center(child: Text('No hay datos del proveedor'));
 
-            return Scaffold(
-              appBar: AppBar(
-                title: Text('Proveedores (${proveedores.length})'),
-              ),
-              body: ListView.builder(
-                itemCount: proveedores.length,
-                itemBuilder: (context, index) {
-                  final proveedor = proveedores[index];
-                  return ProviderDetailBody(proveedor: proveedor);
-                },
-              ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  // Mostrar el diálogo para agregar un nuevo proveedor
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AddProveedorDialog();
-                    },
-                  );
-                },
-                child: Icon(Icons.add),
-              ),
-              floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            );
-          }
+          return ListView.builder(
+            itemCount: service.proveedores.length,
+            itemBuilder: (context, index) {
+              final proveedor = service.proveedores[index];
+              return ProviderDetailBody(proveedor: proveedor);
+            },
+          );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showDialog(context: context, builder: (_) => AddProveedorDialog()),
+        child: Icon(Icons.add),
       ),
     );
   }
 }
 
-class AddProveedorDialog extends StatelessWidget {
+class ProviderDetailBody extends StatelessWidget {
+  final Proveedor proveedor;
+
+  const ProviderDetailBody({required this.proveedor, Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final nombreController = TextEditingController();
-    final apellidoController = TextEditingController();
-    final correoController = TextEditingController();
-    final estadoController = TextEditingController();
-
-    return AlertDialog(
-      title: Text('Agregar Proveedor'),
-      content: SingleChildScrollView( // Envuelve el contenido con SingleChildScrollView
+    return Card(
+      elevation: 4.0,
+      margin: const EdgeInsets.all(8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: nombreController,
-              decoration: InputDecoration(labelText: 'Nombre'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('ID: ${proveedor.id}', style: TextStyle(fontWeight: FontWeight.bold)),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => showDialog(context: context, builder: (_) => EditProveedorDialog(proveedor: proveedor)),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => _confirmDeletion(context, proveedor),
+                ),
+              ],
             ),
-            TextField(
-              controller: apellidoController,
-              decoration: InputDecoration(labelText: 'Apellido'),
+            const SizedBox(height: 10),
+            CircleAvatar(
+              radius: 30,
+              child: Icon(Icons.account_circle, size: 60),
             ),
-            TextField(
-              controller: correoController,
-              decoration: InputDecoration(labelText: 'Correo'),
+            const SizedBox(height: 10),
+            Text('Nombre: ${proveedor.nombre} ${proveedor.apellido}', style: TextStyle(fontSize: 18)),
+            Text('Correo: ${proveedor.correo}', style: TextStyle(fontSize: 16)),
+            Text('Estado: ${proveedor.estado}', style: TextStyle(fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeletion(BuildContext context, Proveedor proveedor) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirmar eliminación"),
+          content: Text("¿Estás seguro de que quieres eliminar a este proveedor?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancelar'),
             ),
-            TextField(
-              controller: estadoController,
-              decoration: InputDecoration(labelText: 'Estado'),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Cerrar el diálogo de confirmación
+                final service = Provider.of<ProveedorService>(context, listen: false);
+                await service.deleteProveedor(proveedor.id);
+              },
+              child: Text('Eliminar', style: TextStyle(color: Colors.red)),
             ),
+          ],
+        );
+      },
+    );
+  }
+}
+class AddProveedorDialog extends StatelessWidget {
+  final _nombreController = TextEditingController();
+  final _apellidoController = TextEditingController();
+  final _correoController = TextEditingController();
+  final _estadoController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Agregar Proveedor'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: _nombreController, decoration: InputDecoration(labelText: 'Nombre')),
+            TextField(controller: _apellidoController, decoration: InputDecoration(labelText: 'Apellido')),
+            TextField(controller: _correoController, decoration: InputDecoration(labelText: 'Correo')),
+            TextField(controller: _estadoController, decoration: InputDecoration(labelText: 'Estado')),
           ],
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            // Cerrar el diálogo
-            Navigator.of(context).pop();
-          },
-          child: Text('Cancelar'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar')),
         ElevatedButton(
           onPressed: () async {
-            // Agregar el proveedor utilizando los valores de los campos
-            final proveedorService = Provider.of<ProveedorService>(context, listen: false);
-            await proveedorService.addProveedor(
-              nombreController.text,
-              apellidoController.text,
-              correoController.text,
-              estadoController.text,
+            await Provider.of<ProveedorService>(context, listen: false).addProveedor(
+              _nombreController.text,
+              _apellidoController.text,
+              _correoController.text,
+              _estadoController.text,
             );
-            // Cerrar el diálogo
             Navigator.of(context).pop();
           },
           child: Text('Guardar'),
@@ -143,110 +168,33 @@ class _EditProveedorDialogState extends State<EditProveedorDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Editar Proveedor'),
-      content: SingleChildScrollView( // Envuelve el contenido con SingleChildScrollView
+      content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: nombreController,
-              decoration: InputDecoration(labelText: 'Nombre'),
-            ),
-            TextField(
-              controller: apellidoController,
-              decoration: InputDecoration(labelText: 'Apellido'),
-            ),
-            TextField(
-              controller: correoController,
-              decoration: InputDecoration(labelText: 'Correo'),
-            ),
-            TextField(
-              controller: estadoController,
-              decoration: InputDecoration(labelText: 'Estado'),
-            ),
+            TextField(controller: nombreController, decoration: InputDecoration(labelText: 'Nombre')),
+            TextField(controller: apellidoController, decoration: InputDecoration(labelText: 'Apellido')),
+            TextField(controller: correoController, decoration: InputDecoration(labelText: 'Correo')),
+            TextField(controller: estadoController, decoration: InputDecoration(labelText: 'Estado')),
           ],
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            // Cerrar el diálogo
-            Navigator.of(context).pop();
-          },
-          child: Text('Cancelar'),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar')),
         ElevatedButton(
           onPressed: () async {
-            // Editar el proveedor utilizando los valores de los campos
-            final proveedorService = Provider.of<ProveedorService>(context, listen: false);
-            await proveedorService.editProveedor(
+            await Provider.of<ProveedorService>(context, listen: false).editProveedor(
               widget.proveedor.id,
               nombreController.text,
               apellidoController.text,
               correoController.text,
               estadoController.text,
             );
-            // Cerrar el diálogo
-            Navigator.of(context).pop();
+            Navigator.of(context). pop();
           },
           child: Text('Guardar'),
         ),
       ],
-    );
-  }
-}
-
-class ProviderDetailBody extends StatelessWidget {
-  final Proveedor proveedor;
-
-  const ProviderDetailBody({required this.proveedor, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'ID: ${proveedor.id}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    // Mostrar el diálogo para editar el proveedor
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return EditProveedorDialog(proveedor: proveedor);
-                      },
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () async {
-                    // Lógica para eliminar el proveedor
-                    final proveedorService = Provider.of<ProveedorService>(context, listen: false);
-                    await proveedorService.deleteProveedor(proveedor.id);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Icon(Icons.person, size: 100),
-            const SizedBox(height: 10),
-            Text('Nombre: ${proveedor.nombre} ${proveedor.apellido}'),
-            Text('Correo: ${proveedor.correo}'),
-            Text('Estado: ${proveedor.estado}'),
-          ],
-        ),
-      ),
     );
   }
 }
