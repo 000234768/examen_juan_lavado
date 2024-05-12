@@ -57,6 +57,7 @@ class CategoryWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text('Total Categorías: ${categoryService.categories.length}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Expanded(
             child: ListView.builder(
               itemCount: categoryService.categories.length,
@@ -117,7 +118,7 @@ class CategoryCard extends StatelessWidget {
               onPressed: () async {
                 final categoryService = Provider.of<CategoryService>(context, listen: false);
                 await categoryService.deleteCategory(category.categoryId);
-                Navigator.of(context). pop();
+                Navigator.of(context).pop();
               },
               child: Text('Eliminar', style: TextStyle(color: Colors.red)),
             ),

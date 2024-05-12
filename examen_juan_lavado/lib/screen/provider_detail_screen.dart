@@ -13,12 +13,24 @@ class ProviderDetailScreen extends StatelessWidget {
           if (service.isLoading) return Center(child: CircularProgressIndicator());
           if (service.proveedores.isEmpty) return Center(child: Text('No hay datos del proveedor'));
 
-          return ListView.builder(
-            itemCount: service.proveedores.length,
-            itemBuilder: (context, index) {
-              final proveedor = service.proveedores[index];
-              return ProviderDetailBody(proveedor: proveedor);
-            },
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Total Proveedores: ${service.proveedores.length}',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: service.proveedores.length,
+                  itemBuilder: (context, index) {
+                    final proveedor = service.proveedores[index];
+                    return ProviderDetailBody(proveedor: proveedor);
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -88,7 +100,7 @@ class ProviderDetailBody extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
                 final service = Provider.of<ProveedorService>(context, listen: false);
                 await service.deleteProveedor(proveedor.id);
               },
@@ -100,6 +112,7 @@ class ProviderDetailBody extends StatelessWidget {
     );
   }
 }
+
 class AddProveedorDialog extends StatelessWidget {
   final _nombreController = TextEditingController();
   final _apellidoController = TextEditingController();
@@ -166,6 +179,8 @@ class _EditProveedorDialogState extends State<EditProveedorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final categoryService = Provider.of<ProveedorService>(context, listen: false);
+
     return AlertDialog(
       title: Text('Editar Proveedor'),
       content: SingleChildScrollView(
@@ -180,17 +195,20 @@ class _EditProveedorDialogState extends State<EditProveedorDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Cancelar')),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('Cancelar'),
+        ),
         ElevatedButton(
           onPressed: () async {
-            await Provider.of<ProveedorService>(context, listen: false).editProveedor(
+            await categoryService.editProveedor(
               widget.proveedor.id,
               nombreController.text,
               apellidoController.text,
               correoController.text,
               estadoController.text,
             );
-            Navigator.of(context). pop();
+            Navigator.of(context).pop();
           },
           child: Text('Guardar'),
         ),
