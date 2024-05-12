@@ -20,7 +20,7 @@ class Proveedor {
   String toJson() => json.encode(toMap());
 
   factory Proveedor.fromMap(Map<String, dynamic> json) => Proveedor(
-        id: json["providerid"],  // Corregido para coincidir con el JSON de la API
+        id: json["providerid"],  // JSON de la API
         nombre: json["provider_name"],
         apellido: json["provider_last_name"],
         correo: json["provider_mail"],

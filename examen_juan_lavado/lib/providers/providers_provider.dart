@@ -73,14 +73,14 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Implementar navegación o acción de edición
+                            
                             print('Editar proveedor ${proveedor.nombre}');
                           },
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
-                            // Implementar acción de eliminación
+                          
                             print('Eliminar proveedor ${proveedor.nombre}');
                           },
                         ),

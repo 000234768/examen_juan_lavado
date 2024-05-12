@@ -50,7 +50,7 @@ class ProveedorService extends ChangeNotifier {
     url,
     headers: {
       'Authorization': basicAuth,
-      'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+      'Content-Type': 'application/json', 
     },
     body: jsonEncode({
       'provider_name': nombre,
@@ -62,7 +62,7 @@ class ProveedorService extends ChangeNotifier {
 
   if (response.statusCode == 200) {
     print('Proveedor agregado exitosamente');
-    // Puedes recargar la lista de proveedores después de agregar uno nuevo
+
     await loadProveedores();
   } else {
     throw Exception('Error al agregar proveedor. Status code: ${response.statusCode}');
@@ -80,7 +80,7 @@ Future<void> editProveedor(int id, String nombre, String apellido, String correo
     url,
     headers: {
       'Authorization': basicAuth,
-      'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+      'Content-Type': 'application/json', 
     },
     body: jsonEncode({
       'provider_id': id,
@@ -93,7 +93,7 @@ Future<void> editProveedor(int id, String nombre, String apellido, String correo
 
   if (response.statusCode == 200) {
     print('Proveedor editado exitosamente');
-    // Puedes recargar la lista de proveedores después de editar uno
+ 
     await loadProveedores();
   } else {
     throw Exception('Error al editar proveedor. Status code: ${response.statusCode}');
@@ -111,7 +111,7 @@ Future<void> deleteProveedor(int id) async {
     url,
     headers: {
       'Authorization': basicAuth,
-      'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+      'Content-Type': 'application/json',
     },
     body: jsonEncode({
       'provider_id': id,
@@ -120,7 +120,7 @@ Future<void> deleteProveedor(int id) async {
 
   if (response.statusCode == 200) {
     print('Proveedor eliminado exitosamente');
-    // Puedes recargar la lista de proveedores después de eliminar uno
+    
     await loadProveedores();
   } else {
     throw Exception('Error al eliminar proveedor. Status code: ${response.statusCode}');

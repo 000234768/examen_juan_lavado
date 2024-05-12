@@ -88,7 +88,7 @@ class ProviderDetailBody extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop(); // Cerrar el diálogo de confirmación
+                Navigator.of(context).pop(); 
                 final service = Provider.of<ProveedorService>(context, listen: false);
                 await service.deleteProveedor(proveedor.id);
               },

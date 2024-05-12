@@ -117,7 +117,7 @@ class CategoryCard extends StatelessWidget {
               onPressed: () async {
                 final categoryService = Provider.of<CategoryService>(context, listen: false);
                 await categoryService.deleteCategory(category.categoryId);
-                Navigator.of(context).pop();
+                Navigator.of(context). pop();
               },
               child: Text('Eliminar', style: TextStyle(color: Colors.red)),
             ),
@@ -178,7 +178,6 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               Navigator.of(context).pop();
             } catch (e) {
               print('Error al editar la categoría: $e');
-              // Mostrar un mensaje de error al usuario si es necesario
             }
           },
           child: Text('Guardar'),

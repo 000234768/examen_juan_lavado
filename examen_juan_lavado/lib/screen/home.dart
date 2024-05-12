@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:examen_juan_lavado/screen/login_screen.dart'; // Asegúrate de que la ruta de importación es correcta
+import 'package:examen_juan_lavado/screen/login_screen.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,22 +10,22 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Administracion mi tiendita'),
         backgroundColor: Colors.blue,
-        automaticallyImplyLeading: false, // Esto elimina el botón de atrás
+        automaticallyImplyLeading: false, 
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () => Navigator.pushReplacementNamed(context, 'login'), // Reemplaza con tu ruta correcta
+            onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
           ),
         ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(height: 20), // Espacio adicional para estética
+          SizedBox(height: 20), 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround, // Espacio uniforme
+              mainAxisAlignment: MainAxisAlignment.spaceAround, 
               children: [
                 _navigationButton(context, 'Productos', Icons.shopping_cart, 'list'),
                 _navigationButton(context, 'Proveedores', Icons.people, 'provider_detail'),
@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            color: Colors.deepPurple[50], // Color suave para el fondo del pie de página
+            color: Colors.deepPurple[50], 
             child: Text(
               '2024 Todos los derechos reservados Juan Lavado',
               textAlign: TextAlign.center,

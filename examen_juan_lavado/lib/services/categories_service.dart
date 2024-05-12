@@ -50,7 +50,7 @@ class CategoryService extends ChangeNotifier {
       url,
       headers: {
         'Authorization': basicAuth,
-        'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+        'Content-Type': 'application/json', 
       },
       body: jsonEncode({
         'category_name': categoryName,
@@ -59,7 +59,7 @@ class CategoryService extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       print('Categoría agregada exitosamente');
-      // Puedes recargar la lista de categorías después de agregar una nueva
+     
       await loadCategories();
     } else {
       throw Exception('Error al agregar categoría. Status code: ${response.statusCode}');
@@ -78,7 +78,7 @@ class CategoryService extends ChangeNotifier {
       url,
       headers: {
         'Authorization': basicAuth,
-        'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+        'Content-Type': 'application/json', 
       },
       body: jsonEncode({
         'category_id': categoryId,
@@ -89,7 +89,7 @@ class CategoryService extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       print('Categoría editada exitosamente');
-      // Puedes recargar la lista de categorías después de editar una categoría
+
       await loadCategories();
     } else {
       throw Exception('Error al editar categoría. Status code: ${response.statusCode}');
@@ -108,7 +108,7 @@ class CategoryService extends ChangeNotifier {
       url,
       headers: {
         'Authorization': basicAuth,
-        'Content-Type': 'application/json', // Especifica el tipo de contenido del cuerpo
+        'Content-Type': 'application/json', 
       },
       body: jsonEncode({
         'category_id': categoryId,
@@ -117,7 +117,7 @@ class CategoryService extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       print('Categoría eliminada exitosamente');
-      // Puedes recargar la lista de categorías después de eliminar una categoría
+  
       await loadCategories();
     } else {
       throw Exception('Error al eliminar categoría. Status code: ${response.statusCode}');
