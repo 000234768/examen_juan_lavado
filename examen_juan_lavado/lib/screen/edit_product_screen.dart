@@ -7,15 +7,15 @@ import 'package:provider/provider.dart';
 import '../ui/input_decorations.dart';
 
 class EditProductScreen extends StatelessWidget {
-  const EditProductScreen({super.key});
+  const EditProductScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final productService = Provider.of<ProductService>(context);
     return ChangeNotifierProvider(
-        create: (_) => ProductFormProvider(productService.SelectProduct!),
-        child: _ProductScreenBody(
-          productService: productService,
-        ));
+      create: (_) => ProductFormProvider(productService.SelectProduct!),
+      child: _ProductScreenBody(productService: productService),
+    );
   }
 }
 
@@ -26,43 +26,48 @@ class _ProductScreenBody extends StatelessWidget {
   }) : super(key: key);
 
   final ProductService productService;
+
   @override
   Widget build(BuildContext context) {
     final productForm = Provider.of<ProductFormProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(children: [
-          Stack(
-            children: [
-              ProductImage(
-                url: productService.SelectProduct!.productImage,
-              ),
-              Positioned(
-                top: 40,
-                left: 20,
-                child: IconButton(
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                ProductImage(
+                  url: productService.SelectProduct!.productImage,
+                ),
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(
                       Icons.arrow_back_ios,
                       size: 40,
                       color: Colors.white,
-                    )),
-              ),
-              Positioned(
-                top: 40,
-                right: 20,
-                child: IconButton(
-                    onPressed: () => {},
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: IconButton(
+                    onPressed: () => _selectImage(context),
                     icon: const Icon(
                       Icons.camera_alt_outlined,
                       size: 40,
                       color: Colors.white,
-                    )),
-              )
-            ],
-          ),
-          _ProductForm(),
-        ]),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            _ProductForm(),
+          ],
+        ),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -88,6 +93,10 @@ class _ProductScreenBody extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _selectImage(BuildContext context) async {
+  
+  }
 }
 
 class _ProductForm extends StatelessWidget {
@@ -111,8 +120,10 @@ class _ProductForm extends StatelessWidget {
                 initialValue: product.productName,
                 onChanged: (value) => product.productName = value,
                 validator: (value) {
-                  if (value == null || value.length < 1)
-                    return 'el nombre es obligatorio';
+                  if (value == null || value.isEmpty) {
+                    return 'El nombre es obligatorio';
+                  }
+                  return null;
                 },
                 decoration: InputDecortions.authInputDecoration(
                   hinText: 'Nombre del producto',
@@ -124,15 +135,33 @@ class _ProductForm extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 initialValue: product.productPrice.toString(),
                 onChanged: (value) {
-                  if (int.tryParse(value) == null) {
+                  if (value.isEmpty) {
                     product.productPrice = 0;
                   } else {
-                    product.productPrice = int.parse(value);
+                    product.productPrice = int.tryParse(value) ?? 0;
                   }
                 },
                 decoration: InputDecortions.authInputDecoration(
-                  hinText: '-----',
+                  hinText: 'Precio',
                   labelText: 'Precio',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'El precio es obligatorio';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Ingrese un número válido';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                initialValue: product.productImage,
+                onChanged: (value) => product.productImage = value,
+                decoration: InputDecortions.authInputDecoration(
+                  hinText: 'URL de la imagen',
+                  labelText: 'Imagen',
                 ),
               ),
               const SizedBox(height: 20),
@@ -150,15 +179,17 @@ class _ProductForm extends StatelessWidget {
   }
 
   BoxDecoration _createDecoration() => const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(25),
-              bottomRight: Radius.circular(25)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              offset: Offset(0, 5),
-              blurRadius: 10,
-            )
-          ]);
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(25),
+          bottomRight: Radius.circular(25),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black,
+            offset: Offset(0, 5),
+            blurRadius: 10,
+          ),
+        ],
+      );
 }

@@ -5,3 +5,7 @@ export 'package:examen_juan_lavado/screen/error_screen.dart';
 export 'package:examen_juan_lavado/screen/list_product_screen.dart';
 export 'package:examen_juan_lavado/screen/login_screen.dart';
 export 'package:examen_juan_lavado/screen/home.dart';
+export 'package:examen_juan_lavado/screen/screen.dart';
+export 'package:examen_juan_lavado/screen/provider_detail_screen.dart';
+export 'package:examen_juan_lavado/screen/provider_edit_screen.dart';
+export 'package:examen_juan_lavado/screen/categories_screen.dart';
